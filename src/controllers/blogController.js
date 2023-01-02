@@ -1,16 +1,26 @@
 const BlogModel = require("../models/blogModel")
 const mongoose = require("mongoose")
 
-const createBlog = async function (req, res) {
-    try {
+const createBlog = async function(req, res){
+    try{
+        let authorId = req.body.authorId
+        let author = await AuthorModel.findById(authorId)
+
+        if(author){
         const data = req.body
         const allData = await BlogModel.create(data)
-        return res.send(allData)
-    }
-    catch (err) {
-        return res.send({ status: false, msg: err.message })
-    }
+        res.status(201).send(allData)
+        }
+        else {
+            res.status(400).send({status: false, msg : "author does not exist"})
+        }
+
+        }
+        catch(err){
+            res.send({status: false, msg : err.message})
+        }   
 }
+
 
 
 const filterData = async function (req, res) {
