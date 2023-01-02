@@ -40,4 +40,3 @@ const filterData = async function (req, res) {
 
 module.exports.createBlog = createBlog;
 module.exports.filterData = filterData;
- 
