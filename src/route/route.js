@@ -22,11 +22,17 @@ router.post("/blog", BlogController.createBlog)
 
 //GETTING BLOG---------------------------------------------------
 
+<<<<<<< HEAD
 router.get("/blog", BlogController.getBlog)
 router.delete("/blogs/:blogId", BlogController.deleteBlog)
 router.delete("/blogs", BlogController.deleteBlogByFilter)
 
 
 
+=======
+router.get("/blog", BlogController.filterData)
+
+router.put("/blogs/:blogId",BlogController.upddateblog)
+>>>>>>> 346ca1d048062dfe50ca9db1d1dd60f98494f21e
 
 module.exports= router
