@@ -22,6 +22,6 @@ router.post("/blog", BlogController.createBlog)
 
 //GETTING BLOG---------------------------------------------------
 
-router.get("/blog", BlogController.getBlog)
+router.get("/blog", BlogController.filterData)
 
 module.exports= router
