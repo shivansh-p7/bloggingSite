@@ -22,7 +22,7 @@ router.post("/blog", BlogController.createBlog)
 
 //GETTING BLOG---------------------------------------------------
 
-router.get("/blog", BlogController.getBlog)
+router.get("/blog", BlogController.filterData)
 
 router.put("/blogs/:blogId",BlogController.upddateblog)
 
