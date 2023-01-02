@@ -24,4 +24,6 @@ router.post("/blog", BlogController.createBlog)
 
 router.get("/blog", BlogController.getBlog)
 
+router.put("/blogs/:blogId",BlogController.upddateblog)
+
 module.exports= router
