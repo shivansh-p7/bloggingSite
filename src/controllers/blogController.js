@@ -1,3 +1,4 @@
+const blogModel = require("../models/blogModel");
 const BlogModel = require("../models/blogModel");
 
 const createBlog = async function (req, res) {
@@ -72,14 +73,15 @@ const upddateblog = async function (req, res) {
 const deleteBlog = async function (req, res) {
   try {
     let blogId = req.params.blogId;
+    let data= await  blogModel.findById(blogId)
+    if(!data) return res.status(404).send({status:true,msg:"Invalid request"})
     const blogData = await BlogModel.findOneAndUpdate(
       { _id: blogId },
       { $set: { isDeleted: true } },
       { new: true }
     );
-    if (!blogData)
-      return res.status(404).send({ status: false, msg: "invalid request" });
-    res.status(200).send();
+    if (!blogData) return res.status(404).send({ status: false, msg: "invalid request" });
+   return  res.status(200).send();
   } catch (err) {
     res.status(500).send({ status: false, msg: err.message });
   }
