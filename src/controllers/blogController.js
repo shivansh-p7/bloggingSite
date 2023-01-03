@@ -76,7 +76,7 @@ const upddateblog = async function (req, res) {
 const deleteBlog = async function (req, res) {
   try {
     let blogId = req.params.blogId;
-    let data= await  blogModel.findById(blogId)
+    let data= await  BlogModel.findById(blogId)
     if(!data) return res.status(404).send({status:true,msg:"Invalid request"})
     const blogData = await BlogModel.findOneAndUpdate(
       { _id: blogId },
