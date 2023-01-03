@@ -9,7 +9,7 @@ router.get("/test-me", (req, res) => {
 });
 
 //CREATING AUTHOR------------------------------
-router.post("/author", AuthorController.createAuthor);
+router.post("/authors", AuthorController.createAuthor);
 
 //GETTING AUTHOR---------------------------------------
 
@@ -17,11 +17,11 @@ router.get("/authors", AuthorController.getAuthor);
 
 //CREATING BLOG------------------------------------------
 
-router.post("/blog", BlogController.createBlog);
+router.post("/blogs", BlogController.createBlog);
 
 //GETTING BLOG---------------------------------------------------
 
-router.get("/blog", BlogController.filterData);
+router.get("/blogs", BlogController.filterData);
 //update blog
 router.put("/blogs/:blogId", BlogController.upddateblog);
 
