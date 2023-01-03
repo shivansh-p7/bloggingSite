@@ -51,24 +51,26 @@ const upddateblog = async function (req, res) {
       return res.status(404).send("no documents found with this id");
 
     let data = req.body;
+    let todaysDate=new Date().toLocaleString()
     let updates = await BlogModel.findOneAndUpdate(
       { _id: req.params["blogId"] },
       {
         body: data["body"],
         $push: {
-          tags: data["tags"],
+          tags: data["tags"]},
           isPublished: true,
-          $push: { publishedAt: new Date() },
+          $set: {publishedAt:todaysDate},
         },
-      },
       { new: true }
     );
-
-    return res.status(200).send({ msg: updates });
+    res.status(200).send({ msg: updates });
+    
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send({error:error.message,msg:"give a proper id"});
   }
 };
+
+
 const deleteBlog = async function (req, res) {
   try {
     let blogId = req.params.blogId;
