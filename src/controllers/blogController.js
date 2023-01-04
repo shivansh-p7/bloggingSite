@@ -26,15 +26,15 @@ const filterData = async function (req, res) {
         isDeleted: false,
         isPublished: true,
       }).populate("authorId");
-      if (!getData) res.status(404).send("Documents not found");
+      if (getData.length==0) res.status(404).send("Documents not found");
 
       return res.status(200).send(getData);
     } else {
       let findData = await BlogModel.find({ ...query }).populate("authorId");
       if (findData.length == 0)
         return res.status(404).send({ msg: "Data not found" });
-      console.log(findData);
-      if (!findData) res.status(200).send({ msg: allData });
+     
+      
       return res.status(200).send({ msg: findData });
     }
   } catch (err) {
@@ -48,7 +48,7 @@ const upddateblog = async function (req, res) {
       _id: req.params["blogId"],
       isDeleted: false,
     });
-    console.log(blogsdata);
+
     if (blogsdata.length == 0)
       return res.status(404).send("no documents found with this id");
 
@@ -58,8 +58,7 @@ const upddateblog = async function (req, res) {
       { _id: req.params["blogId"] },
       {
         body: data["body"],
-        $push: {
-          tags: data["tags"]},
+        $push: {tags: data["tags"]},
           isPublished: true,
           $set: { publishedAt: todaysDate }
         
@@ -77,10 +76,14 @@ const deleteBlog = async function (req, res) {
   try {
     let blogId = req.params.blogId;
     let data= await  BlogModel.findById(blogId)
-    if(!data) return res.status(404).send({status:true,msg:"Invalid request"})
+    
+    if(!data) return res.status(404).send({status:false,msg:"Invalid request"})
+    let todaysDate= new Date().toLocaleString()
+
     const blogData = await BlogModel.findOneAndUpdate(
       { _id: blogId },
-      { $set: { isDeleted: true } },
+      { $set: { isDeleted: true , deletedAt: todaysDate } },
+    
       { new: true }
     );
     if (!blogData) return res.status(404).send({ status: false, msg: "invalid request" });
@@ -93,15 +96,17 @@ const deleteBlog = async function (req, res) {
 const deleteBlogByFilter = async function (req, res) {
   try {
     let query = req.query;
-    if (Object.keys(query).length === 0)
-      return res.status(404).send({ staus: false, msg: "invalid request" });
+    if (Object.keys(query).length === 0 )
+      return res.status(404).send({ status: false, msg: "invalid request" });
+      
+      let todaysDate= new Date().toLocaleString()
     const blogData = await BlogModel.findOneAndUpdate(
       { ...query },
-      { $set: { isDeleted: true } },
+      { $set: { isDeleted: true , deletedAt: todaysDate} },
       { new: true }
     );
-    console.log(blogData);
 
+   
     res.status(200).send();
   } catch (err) {
     res.status(500).send({ status: false, msg: err.message });
