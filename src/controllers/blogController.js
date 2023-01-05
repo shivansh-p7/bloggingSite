@@ -1,7 +1,6 @@
 const AuthorModel = require("../models/authorModel");
 const BlogModel = require("../models/blogModel");
-const jwt=require("jsonwebtoken");
-const blogModel = require("../models/blogModel");
+
 
 const createBlog = async function (req, res) {
   try {
@@ -20,7 +19,7 @@ const createBlog = async function (req, res) {
     let authorData = await AuthorModel.findById(authorId);
     
     //IF AUTHOR ID IS NOT CORRECT-------------------------------
-    if (!authorData)  return  res.status(400).send({ status: false, msg: "author does not exist" });
+    if (!authorData)  return  res.status(400).send({ status: false, msg: "author does not exist with this Id" });
 
     //IF AUTHOR ID IS CORRECT THEN CREATING THE DOCUMENT------------------------------------
       const createdBlog = await BlogModel.create(data);
@@ -39,7 +38,7 @@ const filterData = async function (req, res) {
      
     //IF THERE IS NO QUERY GIVEN------------------------------------------------
     if (Object.keys(query).length == 0) {
-      let getData = await BlogModel.find({isDeleted: false,isPublished: true,}).populate("authorId");
+      let getData = await BlogModel.find({isDeleted: false,isPublished: true}).populate("authorId");
 
     //IF NO SUCH DOCUMENT IS FOUND--------------------------------------------
       if (getData.length==0)  return res.status(404).send("Documents not found"); 
@@ -47,9 +46,11 @@ const filterData = async function (req, res) {
     //IF DOCUMENT FOUND------------------------------------------------------------
       return res.status(200).send({data: getData});
     } 
+
+
     //IF THERE IS QUERY GIVEN-------------------------------------------------------
     else {
-      let findData = await BlogModel.find({ ...query }).populate("authorId");
+      let findData = await BlogModel.find({ ...query,isDeleted: false,isPublished: true}).populate("authorId");
       
     //IF NO DOCUMENT WITH GIVEN QUERY FOUND------------------------------------------------
       if (findData.length == 0) return res.status(404).send({ msg: "Data not found" });
@@ -109,6 +110,8 @@ const deleteBlog = async function (req, res) {
       { $set: { isDeleted: true , deletedAt: todaysDate,isPublished:false } },
       { new: true }
     );
+
+    //IF ALREADY DELETED,THEN BLOG CANNOT BE DELETED
     if (!blogData) return res.status(404).send({ status: false, msg: "blog cannot be deleted" });
    return  res.status(200).send();
   } catch (err) {
@@ -125,21 +128,24 @@ const deleteBlogByFilter = async function (req, res) {
     if (Object.keys(query).length === 0 ) return res.status(404).send({ status: false, msg: "invalid request" });
 
     //IF QUERY IS PRESENT THEN LOOKING FOR THE REQUIRED DOCUMENT ALONG WITH AUTHORIZATION--------------------
-    let data=await blogModel.find({authorId:req.decodedToken.authorId,...query})
+    let data=await BlogModel.find({authorId:req.decodedToken.authorId,...query})
    
-    //IF THE AUTHOR IS NOT VALID----------------------------------------------
-      if(data.length==0) return res.status(400).send({status:false,msg:"You are not authorized to do this action"})
-
-      // IF AUTHORIZATION SUCCESSFUL--------------------------------------------------
+    if(data.length==0) return res.status(400).send({status:false,msg:"Blog not found"})
+   
+    let author=data[0].authorId
+    if(author){
       let todaysDate= new Date().toLocaleString()
       const blogData = await BlogModel.updateMany(
-      { ...query ,isDeleted:false},
+      { ...query,  authorId: req.decodedToken.authorId ,isDeleted:false},
       { $set: { isDeleted: true , deletedAt: todaysDate,isPublished:false} },
       { new: true }
     );
-    if (!blogData) return res.status(404).send({ status: false, msg: "data cannot be deleted" });
-   
-   return  res.status(200).send();
+    
+    if (blogData.modifiedCount === 0) return res.status(400).send({ status: false, message: "No blog to be deleted" });
+    else return res.status(200).send({ status: true, data: `${blogData.modifiedCount} blog deleted` });
+    
+      }else return res.status(400).send({ status: false, message: "You are not authorized to do this action" });
+  
   } 
   catch (err) {
    return res.status(500).send({ status: false, msg: err.message });

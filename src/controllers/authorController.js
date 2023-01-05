@@ -8,8 +8,8 @@ const createAuthor = async function (req, res) {
     let {fname, lname, title,email,password} = data
 
     //IF ANY OF THE FIELD IS MISSING-------------------------------------------------
-    if(!fname) return res.status(400).send({status : false,msg : "cannot create author,fname is required"})
-    if(!lname) return res.status(400).send({status : false,msg : "cannot create author,lname is required"})
+    if(!fname) return res.status(400).send({status : false,msg : "cannot create author,first name is required"})
+    if(!lname) return res.status(400).send({status : false,msg : "cannot create author,last name is required"})
     if(!title) return res.status(400).send({status : false,msg : "cannot create author,title is required"})
     if(!email) return res.status(400).send({status : false,msg : "cannot create author, email is required"})
     if(!password) return res.status(400).send({status : false,msg : "cannot create author,password is required"})
