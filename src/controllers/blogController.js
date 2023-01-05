@@ -148,37 +148,7 @@ const deleteBlogByFilter = async function (req, res) {
 
 
 
-const authorLogin=async function(req,res){
- try {
-  let {email,password}=req.body
 
-  //IF DATA IS NOT PROVIDED IN THE REQ BODY--------------------------------
-  if(!email && !password) return res.status(400).send({status: false, msg :"please provide email and password to login"})
-
-  //IF ONE OF THE FIELDS IS MISSING----------------------------------------------
-  if (!email)  return res.status(400).send({status: false, msg :"email is required to login"})
-  if (!password)  return res.status(400).send({status: false, msg :"password is required to login"})
-
-  //IF DETAILS ARE POVIDED THEN CHECKING IF THE DETAILS ARE CORRECT OR NOT---------------------
-  let authorData= await AuthorModel.findOne({email:email,password:password})
-
-  //IF DETAILS NOT CORRECT-------------------------------------------------------
-  if(!authorData) return res.status(404).send({status:false,msg:"Enter valid Details"})
-  
-  //IF DETAILS ARE CORRECT THEN CREATING THE TOKEN------------------------------------------------
-  const token= jwt.sign({
-  authorId:authorData._id.toString(),
-  team: "4 members"
-  },
-  "project1group1"
-  )
-  
-  return res.status(200).send({status:true,data:token})
-  }catch(error){
-return res.status(500).send({msg:error.message})
-
-  }
-}
 
 
 module.exports.createBlog = createBlog;
@@ -186,4 +156,5 @@ module.exports.filterData = filterData;
 module.exports.upddateblog = upddateblog;
 module.exports.deleteBlog = deleteBlog;
 module.exports.deleteBlogByFilter = deleteBlogByFilter;
-module.exports.authorLogin=authorLogin
+
+
