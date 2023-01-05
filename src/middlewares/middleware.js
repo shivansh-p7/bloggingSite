@@ -28,25 +28,11 @@ catch(error){
 }
 
 
-// const authorization= async function (req,res,next){
-//   try{  
-//     let {authorId}=req.params
-   
 
-//     if (authorId!=req.decodedToken.authorId) return res.status(400).send({status:false,msg:"You're not authorized to do this action"})
-
-// next()
-// }
-// catch(error){
-//     return res.status(500).send({status:false,err:error.message})
-// }
-
-// }
 module.exports.headerValidator=headerValidator
 module.exports.authentication=authentication
 
 
 
 
- // const isAuthorBlog= await  BlogModel.findOne({_id:blogId,authorId:authorId})
-    // if(!isAuthorBlog) return res.status(400).send({status:false,msg:"invalid 2request"})
+ 

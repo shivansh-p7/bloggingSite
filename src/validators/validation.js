@@ -1,5 +1,3 @@
-const mongoose = require("mongoose")
-const email=require("mongoose-type-email")
 
 const isValidName = function (name) {
     const nameRegex = /^[a-zA-Z]+$/;

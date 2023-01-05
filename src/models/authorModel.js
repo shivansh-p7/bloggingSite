@@ -5,13 +5,11 @@ const authorSchema = new mongoose.Schema(
   {
     fname: {
       type: String,
-      required: true,
-      trim:true
+      required: true
     },
     lname: {
       type: String,
-      required: true,
-      trim:true
+      required: true
     },
     title: {
       type: String,
@@ -21,8 +19,7 @@ const authorSchema = new mongoose.Schema(
     email: {
       type: email,
       unique: true,
-      required: true,
-      trim:true
+      required: true
     },
     password: {
       type: String,
