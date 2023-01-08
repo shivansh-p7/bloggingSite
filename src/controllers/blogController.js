@@ -1,18 +1,29 @@
 const AuthorModel = require("../models/authorModel");
 const BlogModel = require("../models/blogModel");
-
+const { isValidObjectId } = require('mongoose')
 
 const createBlog = async function (req, res) {
   try {
     let data = req.body
+ // IF NO DATA IS PRESENT IN BODY
+    if(Object.keys(data).length===0) return res.status(400).send({status:false,msg:"put some data to update"})
+
     let {title, body, authorId, tags, category, subcategory} = data
-     
+   
+ title=title.trim()
+ body=body.trim()
     //IF ANY FIELD IS NOT PRESENT IN THE REQ BODY------------------------------------------
-    if(!title) return res.status(400).send({status : false,msg : "cannot create blog,title is required"})
+  
+    if(!title ) return res.status(400).send({status : false,msg : "cannot create blog,title is required"})
+
     if(!body) return res.status(400).send({status : false,msg : "cannot create blog,body is required"})
+
     if(!authorId) return res.status(400).send({status : false,msg : "cannot create blog,authorId is required"})
+
     if(!tags) return res.status(400).send({status : false,msg : "cannot create blog,tags are required"})
+
     if(!category) return res.status(400).send({status : false,msg : "cannot create blog,category is required"})
+
     if(!subcategory) return res.status(400).send({status : false,msg : "cannot create blog,subcategory is required"})
 
     //LOOKING FOR THE AUTHOR ID IN COLLECTION--------------------------------------
@@ -20,10 +31,12 @@ const createBlog = async function (req, res) {
     
     //IF AUTHOR ID IS NOT CORRECT-------------------------------
     if (!authorData)  return  res.status(400).send({ status: false, msg: "author does not exist with this Id" });
-
     //IF AUTHOR ID IS CORRECT THEN CREATING THE DOCUMENT------------------------------------
-      const createdBlog = await BlogModel.create(data);
-      return res.status(201).send({data:createdBlog});
+    if (!isValidObjectId(data.authorId))
+    return res.status(400).send({ status: false, message: "Enter Valid AuthorId" })
+const createdBlog = await blogModel.create(data)
+res.status(201).send({ status: true, message: "Blog Created Successfully", data: createdBlog })
+
   } 
   catch (err) {
      return res.status(500).send({ status: false, msg: err.message });
@@ -68,6 +81,9 @@ const filterData = async function (req, res) {
 
 const upddateblog = async function (req, res) {
   try {
+
+     let blogId=req.params.blogId
+     if (!isValidObjectId(blogId)) return res.status(400).send({ status: false, message: "Enter Valid BlogId" })
     //LOOKING FOR THE REQUIRED BLOG IN COLLECTION------------------------------
     let blogsdata = await BlogModel.findOne({_id: req.params["blogId"], isDeleted: false});
 
@@ -80,10 +96,14 @@ const upddateblog = async function (req, res) {
     
     //IF AUTHORIZATION SUCCESSFUL --------------------------------------------------
     let data = req.body;
+     // IF NO DATA IS PRESENT IN BODY
+    if(Object.keys(data).length===0) return res.status(400).send({status:false,msg:"put some data to update"})
+
+
     let todaysDate= new Date().toLocaleString()
     let updates = await BlogModel.findOneAndUpdate(
       { _id: req.params["blogId"] },
-      {  body: data["body"], $push: {tags: data["tags"]}, isPublished: true, $set: { publishedAt: todaysDate }  },
+      {  body: data["body"],title:data["title"],$push: {tags: data["tags"]},$push: {category: data["category"]}, $push: {subcategory: data["subcategory"]}, isPublished: true, $set: { publishedAt: todaysDate }  },
       { new: true }
     );
     return res.status(200).send({ data: updates });
@@ -107,7 +127,7 @@ const deleteBlog = async function (req, res) {
     let todaysDate= new Date().toLocaleString()
     const blogData = await BlogModel.findOneAndUpdate(
       { _id: blogId,isDeleted:false },
-      { $set: { isDeleted: true , deletedAt: todaysDate,isPublished:false } },
+      { $set: { isDeleted: true, deletedAt: todaysDate,isPublished:false } },
       { new: true }
     );
 

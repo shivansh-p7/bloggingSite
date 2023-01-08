@@ -13,6 +13,5 @@ const isValidEmail=function(email){
     return  pattern.test(email)
 }
 
-module.exports.isValidName=isValidName;
-module.exports.isValidPassword=isValidPassword;
-module.exports.isValidEmail=isValidEmail;
+
+module.exports={isValidEmail,isValidName,isValidPassword}

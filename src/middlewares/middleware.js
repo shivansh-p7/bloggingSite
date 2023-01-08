@@ -28,9 +28,7 @@ catch(error){
 }
 
 
-
-module.exports.headerValidator=headerValidator
-module.exports.authentication=authentication
+module.exports={headerValidator,authentication};
 
 
 
